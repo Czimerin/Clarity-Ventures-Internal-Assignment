@@ -12,4 +12,8 @@
     <Folder Include="Services.Tests\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.7.1.1" />
+  </ItemGroup>
+
 </Project>

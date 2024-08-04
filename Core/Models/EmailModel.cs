@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Core.Models
 {
-    internal class EmailModel
+    public class EmailModel
     {
-        public string Sender { get; set; }
-        public string Recipient { get; set; }
+        public string SenderName { get; set; }
+        public string SenderAddress { get; set; }
+        public string RecipientName { get; set; }
+        public string RecipientAddress { get; set; }
         public string? Subject { get; set; }
         public string? Body { get; set; }
         public DateTime Date { get; set; }
