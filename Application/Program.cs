@@ -11,6 +11,8 @@ builder.Services.Configure<MailSettingsModel>(builder.Configuration.GetSection("
 builder.Services.AddTransient<IEmailService, EmailService>();
 /*-----------------*/
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
