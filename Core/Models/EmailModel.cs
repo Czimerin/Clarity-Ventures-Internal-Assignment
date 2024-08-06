@@ -8,8 +8,6 @@ namespace Core.Models
 {
     public class EmailModel
     {
-        public string SenderName { get; set; }
-        public string SenderAddress { get; set; }
         public string RecipientName { get; set; }
         public string RecipientAddress { get; set; }
         public string? Subject { get; set; }

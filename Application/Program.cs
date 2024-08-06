@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Core.Interfaces;
 using Services.EmailService;
+using Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+
+builder.Services.Configure<MailSettingsModel>(builder.Configuration.GetSection("MailSettings"));
 
 /*-----Services-----*/
 builder.Services.AddTransient<IEmailService, EmailService>();
