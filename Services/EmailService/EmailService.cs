@@ -1,5 +1,4 @@
-﻿
-using Core.Interfaces;
+﻿using Core.Interfaces;
 using Core.Models;
 using MimeKit;
 using MailKit.Net.Smtp;
@@ -49,9 +48,11 @@ namespace Services.EmailService
                 await _emailSender.SendEmailAsync(message);
                 logDetails.Status = "Success";
             }
-            catch
+            catch(Exception ex)
             {
                 logDetails.Status = "Failed";
+                _logger.LogError(ex, "Error sending email");
+                throw;
             }
 
             _logger.LogInformation("Email log: {@logDetails}", logDetails);
