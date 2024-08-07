@@ -12,16 +12,15 @@ namespace Services.EmailService
 {
     public class EmailService : IEmailService
     {
-        private readonly MailSettingsModel _mailSettings;
+        private readonly IEmailSender _emailSender;
         private readonly ILogger<EmailService> _logger;
+        private readonly MailSettingsModel _mailSettings;
 
-        private int MaxRetries = 3;
-        private const int RetryDelayMilliseconds = 2000;
-
-        public EmailService(IOptions<MailSettingsModel> mailSettings, ILogger<EmailService> logger)
+        public EmailService(IEmailSender emailSender, ILogger<EmailService> logger, IOptions<MailSettingsModel> mailSettings)
         {
-            _mailSettings = mailSettings.Value;
+            _emailSender = emailSender;
             _logger = logger;
+            _mailSettings = mailSettings.Value;
         }
 
         public async Task SendEmailAsync(EmailModel email)
@@ -45,39 +44,20 @@ namespace Services.EmailService
 
             LogEmailDetails(logDetails);
 
-            
-
-            for (int attempt = 1; attempt <= MaxRetries; attempt++)
+            try
             {
-                using var clinet = new SmtpClient();
-                try
-                {
-                    await clinet.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-                    await clinet.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
-                    await clinet.SendAsync(message);
-
-                    logDetails.Status = "Success";
-                    _logger.LogInformation("Email sent successfully");
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Attempt {Attempt}: Failed to send email.", attempt);
-                    logDetails.Status = $"Failed (Attempt {attempt})";
-
-                    if (attempt == MaxRetries)
-                    {
-                        _logger.LogError("Max({Attempt}) attempts reached.", attempt);
-                        throw;
-                    }
-
-                    await Task.Delay(RetryDelayMilliseconds);
-                }
-
-                await clinet.DisconnectAsync(true);
-                Log.Information("Email log: {@logDetails}", logDetails);
+                await _emailSender.SendEmailAsync(message);
+                logDetails.Status = "Success";
             }
-                
+            catch
+            {
+                logDetails.Status = "Failed";
+            }
+
+            _logger.LogInformation("Email log: {@logDetails}", logDetails);
+
+
+
         }
 
         private MimeMessage CreateMessage(EmailModel email)

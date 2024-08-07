@@ -28,6 +28,7 @@ builder.Services.Configure<MailSettingsModel>(builder.Configuration.GetSection("
 
 /*-----Services-----*/
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 /*-----------------*/
 
 var app = builder.Build();
