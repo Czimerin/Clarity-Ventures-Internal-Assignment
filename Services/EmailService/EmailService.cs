@@ -6,6 +6,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using MailKit.Security;
+using Serilog;
 
 namespace Services.EmailService
 {
@@ -38,11 +39,17 @@ namespace Services.EmailService
 
             message.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = email.Body };
 
-            _logger.LogInformation("Sending email:");
-            _logger.LogInformation("From: {SenderName} <{SenderAddress}>", _mailSettings.Name, _mailSettings.UserName);
-            _logger.LogInformation("To: {RecipientName} <{RecipientAddress}>", email.RecipientName, email.RecipientAddress);
-            _logger.LogInformation("Subject: {Subject}", email.Subject);
-            _logger.LogInformation("Body: {Body}", email.Body);
+            var logDetails = new LogDetails
+            {
+                Sender = $"{_mailSettings.Name} <{_mailSettings.UserName}>",
+                Recipient = $"{email.RecipientName} <{email.RecipientAddress}>",
+                Subject = email.Subject,
+                Body = email.Body,
+                SentDate = DateTime.UtcNow,
+                Status = "Pending"
+            };
+
+            LogEmailDetails(logDetails);
 
             using var clinet = new SmtpClient();
 
@@ -51,13 +58,27 @@ namespace Services.EmailService
                 clinet.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
                 clinet.Authenticate(_mailSettings.UserName, _mailSettings.Password);
                 clinet.Send(message);
+
+                logDetails.Status = "Success";
+                _logger.LogInformation("Email sent successfully");
             }
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "An error occurred while sending the email.");
+                logDetails.Status = "Failed";
             }
 
             clinet.Disconnect(true);
+            Log.Information("Email log: {@logDetails}", logDetails);
+        }
+
+        private void LogEmailDetails(LogDetails logDetails)
+        {
+            _logger.LogInformation("Sending email:");
+            _logger.LogInformation("From: {Sender}", logDetails.Sender);
+            _logger.LogInformation("To: {Recipient}", logDetails.Recipient);
+            _logger.LogInformation("Subject: {Subject}", logDetails.Subject);
+            _logger.LogInformation("Body: {Body}", logDetails.Body);
         }
 
 
