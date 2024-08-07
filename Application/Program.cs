@@ -2,6 +2,7 @@ using Core.Interfaces;
 using Services.EmailService;
 using Core.Models;
 using Serilog;
+using MailKit.Net.Smtp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +28,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<MailSettingsModel>(builder.Configuration.GetSection("MailSettings"));
 
 /*-----Services-----*/
+builder.Services.AddTransient<Core.Interfaces.ISmtpClient, SmtpClientWrapper>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient(provider => new SmtpClient());
 /*-----------------*/
 
 var app = builder.Build();
