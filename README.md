@@ -10,7 +10,7 @@ This project implements an email sending service that meets specific client requ
 - **Retry Logic**: Retries sending an email up to 3 times if it fails, with a delay between attempts.
 - **Logging**: Logs email sending attempts, including sender, recipient, subject, body, and status.
 - **Configuration**: Stores email settings in `appsettings.json` for flexibility.
-- **API Integration: Provides an API to send emails via HTTP requests.
+- **API Integration**: Provides an API to send emails via HTTP requests.
 
   ### Prerequisites
 
