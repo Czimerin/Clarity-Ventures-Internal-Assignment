@@ -9,7 +9,8 @@ namespace Services.EmailService
     public class LogDetails
     {
         public string Sender { get; set; }
-        public string Recipient { get; set; }
+        public string Recipients { get; set; }
+        public string CcRecipients { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
         public DateTime SentDate { get; set; }
