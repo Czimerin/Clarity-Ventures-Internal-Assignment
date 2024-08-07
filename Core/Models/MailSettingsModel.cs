@@ -2,10 +2,10 @@
 {
     public class MailSettingsModel
     {
-        public string Name { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Host { get; set; }
-        public int Port { get; set; }
+        public required string Name { get; set; }
+        public required string UserName { get; set; }
+        public required string Password { get; set; }
+        public required string Host { get; set; }
+        public required int Port { get; set; }
     }
 }
