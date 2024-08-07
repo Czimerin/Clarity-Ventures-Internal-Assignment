@@ -40,17 +40,21 @@ Open `appsettings.json` and replace the existing content with the following, upd
     "Name": "Example Name"
   }
 }
+```
 An example would be :
+
 ```json
+
 "MailSettings": {
     "Host": "smtp.ethereal.email",
     "Port": 587,
     "Name": "Alfonzo Kreiger",
     "UserName": "alfonzo.kreiger80@ethereal.email",
-    "Password": "9XWAgKPh7Q23UaHWJR"
+    "Password": "***************"
 }
-
+```
 3. **Build and Run the Application**
+
 Build the Application
 
 Navigate to the Application project directory and build the application using the .NET CLI:
@@ -58,10 +62,10 @@ Navigate to the Application project directory and build the application using th
 ```bash
 
 dotnet build
-
+```
 Then run it:
 
 ```bash
 
 dotnet run
-
+```
