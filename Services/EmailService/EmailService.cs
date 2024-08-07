@@ -15,6 +15,9 @@ namespace Services.EmailService
         private readonly MailSettingsModel _mailSettings;
         private readonly ILogger<EmailService> _logger;
 
+        private int MaxRetries = 3;
+        private const int RetryDelayMilliseconds = 2000;
+
         public EmailService(IOptions<MailSettingsModel> mailSettings, ILogger<EmailService> logger)
         {
             _mailSettings = mailSettings.Value;
@@ -51,25 +54,39 @@ namespace Services.EmailService
 
             LogEmailDetails(logDetails);
 
-            using var clinet = new SmtpClient();
+            
 
-            try
+            for (int attempt = 1; attempt <= MaxRetries; attempt++)
             {
-                clinet.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-                clinet.Authenticate(_mailSettings.UserName, _mailSettings.Password);
-                clinet.Send(message);
+                using var clinet = new SmtpClient();
+                try
+                {
+                    await clinet.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+                    await clinet.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
+                    await clinet.SendAsync(message);
 
-                logDetails.Status = "Success";
-                _logger.LogInformation("Email sent successfully");
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogError(ex, "An error occurred while sending the email.");
-                logDetails.Status = "Failed";
-            }
+                    logDetails.Status = "Success";
+                    _logger.LogInformation("Email sent successfully");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Attempt {Attempt}: Failed to send email.", attempt);
+                    logDetails.Status = $"Failed (Attempt {attempt})";
 
-            clinet.Disconnect(true);
-            Log.Information("Email log: {@logDetails}", logDetails);
+                    if (attempt == MaxRetries)
+                    {
+                        _logger.LogError("Max({Attempt}) attempts reached.", attempt);
+                        throw;
+                    }
+
+                    await Task.Delay(RetryDelayMilliseconds);
+                }
+
+                await clinet.DisconnectAsync(true);
+                Log.Information("Email log: {@logDetails}", logDetails);
+            }
+                
         }
 
         private void LogEmailDetails(LogDetails logDetails)
