@@ -26,46 +26,83 @@ This project implements an email sending service that meets specific client requ
 
 2. **Configure SMTP Settingsz**
 
-Update the `appsettings.json` file with your SMTP server settings. This file is used to configure the email settings required by the `EmailSender` service.
+  Update the `appsettings.json` file with your SMTP server settings. This file is used to configure the email settings required by the `EmailSender` service.
 
-Open `appsettings.json` and replace the existing content with the following, updating the placeholder values with your SMTP server information:
+  Open `appsettings.json` and replace the existing content with the following, updating the placeholder values with your SMTP server information:
 
-```json
-{
-  "MailSettings": {
-    "Host": "smtp.example.com",
-    "Port": 587,
-    "UserName": "username@example.com",
-    "Password": "password",
-    "Name": "Example Name"
+  ```json
+  {
+    "MailSettings": {
+      "Host": "smtp.example.com",
+      "Port": 587,
+      "UserName": "username@example.com",
+      "Password": "password",
+      "Name": "Example Name"
+    }
   }
-}
-```
-An example would be :
+  ```
+  An example would be :
 
-```json
+  ```json
 
-"MailSettings": {
-    "Host": "smtp.ethereal.email",
-    "Port": 587,
-    "Name": "Alfonzo Kreiger",
-    "UserName": "alfonzo.kreiger80@ethereal.email",
-    "Password": "***************"
-}
-```
+  "MailSettings": {
+      "Host": "smtp.ethereal.email",
+      "Port": 587,
+      "Name": "Alfonzo Kreiger",
+      "UserName": "alfonzo.kreiger80@ethereal.email",
+      "Password": "***************"
+  }
+  ```
 3. **Build and Run the Application**
 
-Build the Application
+  Build the Application
 
-Navigate to the Application project directory and build the application using the .NET CLI:
+  Navigate to the Application project directory and build the application using the .NET CLI:
+  
 
-```bash
+  ```bash
+  cd application
+  dotnet build
+  ```
 
-dotnet build
-```
-Then run it:
+  Then run it:
 
-```bash
+  ```bash
 
-dotnet run
-```
+  dotnet run
+  ```
+4. **API Testing with Postman**
+
+  To test the email sending functionality of the API, you can use Postman. Follow these steps to send a request to the API:
+
+  API Endpoint
+
+  URL: http://localhost:5155/api/email/send
+
+  Method: POST
+  Request Headers
+
+    Content-Type: application/json
+
+  Request Body
+
+  Provide the request body in JSON format. Here's an example of a request body you can use:
+
+  ```json
+  {
+    "toRecipients": [
+      {
+        "recipientName": "Alfonzo Kreiger",
+        "recipientAddress": "alfonzo.kreiger80@ethereal.email"
+      }
+    ],
+    "subject": "Hello World",
+    "body": "This is a test email.",
+    "ccRecipients": null,
+    "attachments": null
+  }
+
+  ```
+
+
+
